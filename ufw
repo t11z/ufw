@@ -1,0 +1,23 @@
+#!/bin/sh
+
+HOME_IPv4=$(dig +short -t a myhome.dyn.com)
+HOME_IPv6=$(dig +short -t aaaa myhome.dyn.com)
+WORK="1.2.3.0/24"
+
+# set defaults
+/usr/sbin/ufw reset
+/usr/sbin/ufw default deny incoming
+/usr/sbin/ufw default allow outgoing
+
+# allow myapp https
+/usr/sbin/ufw allow from $HOME_IPv4 to any port https
+/usr/sbin/ufw allow from $HOME_IPv6 to any port https
+/usr/sbin/ufw allow from $WORK to any port https
+
+# allow ssh
+/usr/sbin/ufw allow from $HOME_IPv4 to any port ssh
+/usr/sbin/ufw allow from $HOME_IPv6 to any port ssh
+/usr/sbin/ufw allow from $WORK to any port ssh
+
+# enable ufw
+/usr/sbin/ufw enable
